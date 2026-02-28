@@ -80,6 +80,12 @@ def access_activity_data(access_token:str, params:dict=None) -> dict:
 
 
 done = 0
+x0 = 0
+x1 = 0
+y0 = 0
+y1 = 0
+call_x = 0
+call_y = 0
 if __name__ == "__main__":
     import pandas as pd
     datas = pd.read_csv('data\my_activity_data=20260228120007.csv')
@@ -108,24 +114,30 @@ if __name__ == "__main__":
             m.arcgisimage(xpixels=400, verbose=True)
             # m.etopo()
             x, y = m(ride_longitudes, ride_latitudes)
+            print(x[:3], ride_longitudes[:3])
             m.plot(x, y, 'r-')
             # m.imshow()
             
 
             def on_lims_change(event_ax, is_x):
-                global done
+                global done, call_x, call_y
                 done = done + 1 if is_x else 2
                 if done > 0 and done < 3:
                     pass
                     # plt.close()
-
+                print(is_x)
+                if is_x:
+                    return
                 print("updated ylims: ", event_ax.get_ylim())
                 print("updated xlims: ", event_ax.get_xlim())
+                # exit()
                 x0, x1 = event_ax.get_xlim()
                 y0, y1 = event_ax.get_ylim()
                 
-                plt.close()
-                ax = plt.subplot()
+                # plt.close()
+                # ax = plt.subplot()
+                ax.callbacks.disconnect(call_x)
+                ax.callbacks.disconnect(call_y)
                 m = Basemap(
                     llcrnrlon=x0,
                     llcrnrlat=y0,
@@ -141,8 +153,8 @@ if __name__ == "__main__":
                 m.plot(x, y, 'r-')
                 if done == 3:
                     pass
-                ax.callbacks.connect('xlim_changed', on_ylims_change)
-                ax.callbacks.connect('ylim_changed', on_ylims_change)
+                call_x = ax.callbacks.connect('xlim_changed', on_xlims_change)
+                call_y = ax.callbacks.connect('ylim_changed', on_ylims_change)
                 plt.show()
                 done = 0
                 
@@ -153,8 +165,8 @@ if __name__ == "__main__":
                 on_lims_change(event_ax, 0)
             
            
-            ax.callbacks.connect('xlim_changed', on_xlims_change)
-            ax.callbacks.connect('ylim_changed', on_ylims_change)
+            call_x = ax.callbacks.connect('xlim_changed', on_xlims_change)
+            call_y = ax.callbacks.connect('ylim_changed', on_ylims_change)
 
         else:
             plt.axes() .set_aspect('equal')
