@@ -29,6 +29,8 @@ def access_activity_data(access_token:str, params:dict=None) -> dict:
 
         if 1:
             print(ride_longitudes[0], ride_latitudes[0] )
+
+            _, ax = plt.subplot()
            
             m = Basemap(
                 llcrnrlon=min(ride_longitudes) - 0.02,
@@ -36,12 +38,38 @@ def access_activity_data(access_token:str, params:dict=None) -> dict:
                 urcrnrlon=max(ride_longitudes) + 0.02, 
                 urcrnrlat=max(ride_latitudes) + 0.02,
                 # epsg=23095,
+                ax=ax
             )
 
             m.arcgisimage(xpixels=1000, verbose=True)
             # m.etopo()
             x, y = m(ride_longitudes, ride_latitudes)
             m.plot(x, y, 'r-')
+            m.imshow()
+
+            def on_ylims_change(event_ax):
+                print("updated ylims: ", event_ax.get_ylim())
+                x0, x1 = event_ax.get_xlim()
+                y0, y1 = event_ax.get_ylim()
+
+                # m = Basemap(
+                #     llcrnrlon=x0,
+                #     llcrnrlat=y0,
+                #     urcrnrlon=x1, 
+                #     urcrnrlat=y1,
+                #     # epsg=23095,
+                # )
+
+                m.arcgisimage(xpixels=1000, verbose=True)
+                # m.etopo()
+                x, y = m(ride_longitudes, ride_latitudes)
+                m.plot(x, y, 'r-')
+                
+                
+            
+           
+            ax.callbacks.connect('xlim_changed', on_ylims_change)
+            ax.callbacks.connect('ylim_changed', on_ylims_change)
 
         else:
             plt.axes() .set_aspect('equal')
@@ -51,7 +79,7 @@ def access_activity_data(access_token:str, params:dict=None) -> dict:
     return activity_data
 
 
-
+done = 0
 if __name__ == "__main__":
     import pandas as pd
     datas = pd.read_csv('data\my_activity_data=20260228120007.csv')
@@ -65,6 +93,8 @@ if __name__ == "__main__":
 
         if 1:
             print(ride_longitudes[0], ride_latitudes[0] )
+
+            ax = plt.subplot()
            
             m = Basemap(
                 llcrnrlon=min(ride_longitudes) - 0.02,
@@ -72,12 +102,59 @@ if __name__ == "__main__":
                 urcrnrlon=max(ride_longitudes) + 0.02, 
                 urcrnrlat=max(ride_latitudes) + 0.02,
                 # epsg=23095,
+                ax=ax
             )
 
-            m.arcgisimage(xpixels=1000, verbose=True)
+            m.arcgisimage(xpixels=400, verbose=True)
             # m.etopo()
             x, y = m(ride_longitudes, ride_latitudes)
             m.plot(x, y, 'r-')
+            # m.imshow()
+            
+
+            def on_lims_change(event_ax, is_x):
+                global done
+                done = done + 1 if is_x else 2
+                if done > 0 and done < 3:
+                    pass
+                    # plt.close()
+
+                print("updated ylims: ", event_ax.get_ylim())
+                print("updated xlims: ", event_ax.get_xlim())
+                x0, x1 = event_ax.get_xlim()
+                y0, y1 = event_ax.get_ylim()
+                
+                plt.close()
+                ax = plt.subplot()
+                m = Basemap(
+                    llcrnrlon=x0,
+                    llcrnrlat=y0,
+                    urcrnrlon=x1, 
+                    urcrnrlat=y1,
+                    ax=ax
+                    # epsg=23095,
+                )
+
+                m.arcgisimage(xpixels=400, verbose=True)
+                # m.etopo()
+                x, y = m(ride_longitudes, ride_latitudes)
+                m.plot(x, y, 'r-')
+                if done == 3:
+                    pass
+                ax.callbacks.connect('xlim_changed', on_ylims_change)
+                ax.callbacks.connect('ylim_changed', on_ylims_change)
+                plt.show()
+                done = 0
+                
+            def on_xlims_change(event_ax):
+                on_lims_change(event_ax, 1)
+
+            def on_ylims_change(event_ax):
+                on_lims_change(event_ax, 0)
+            
+           
+            ax.callbacks.connect('xlim_changed', on_xlims_change)
+            ax.callbacks.connect('ylim_changed', on_ylims_change)
 
         else:
             plt.axes() .set_aspect('equal')
