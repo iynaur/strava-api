@@ -16,6 +16,7 @@ def get_acces_token():
     }
     res = requests.post(endpoints.auth_endpoint, data=payload, verify=False)
     access_token = res.json()['access_token']
+    print(f'access_token = {access_token}')
     return access_token
 
 

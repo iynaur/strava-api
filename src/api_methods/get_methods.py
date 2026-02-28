@@ -1,13 +1,62 @@
 import requests
 
-from src.api_methods import endpoints
+
+
+import polyline
+import matplotlib.pyplot as plt
+from mpl_toolkits.basemap import Basemap
+
+
+
 
 
 def access_activity_data(access_token:str, params:dict=None) -> dict:
-    headers:dict = {'Authorization': f'Authorization: Bearer {access_token}'}
+    from src.api_methods import endpoints
+    headers:dict = {'Authorization': f'Bearer {access_token}'}
+    print(headers)
     if not params:
         response:dict = requests.get(endpoints.activites_endpoint, headers=headers)
-    response:dict = requests.get(endpoints.activites_endpoint, headers=headers, params=params)
+    else:
+        response:dict = requests.get(endpoints.activites_endpoint, headers=headers, )
     response.raise_for_status()
     activity_data = response.json()
+    # print(activity_data)
+    for data in activity_data:
+        coordinates = polyline.decode(data['map']['summary_polyline'])
+
+        ride_longitudes = [coordinate[1] for coordinate in coordinates]
+        ride_latitudes = [coordinate[0] for coordinate in coordinates]
+
+        if 1:
+            print(ride_longitudes[0], ride_latitudes[0] )
+           
+            m = Basemap(
+                llcrnrlon=min(ride_longitudes) - 0.02,
+                llcrnrlat=min(ride_latitudes) - 0.02,
+                urcrnrlon=max(ride_longitudes) + 0.02, 
+                urcrnrlat=max(ride_latitudes) + 0.02,
+                # epsg=23095,
+            )
+
+            m.arcgisimage(xpixels=1000, verbose=True)
+            # m.etopo()
+            x, y = m(ride_longitudes, ride_latitudes)
+            m.plot(x, y, 'r-')
+
+        else:
+            plt.axes() .set_aspect('equal')
+            plt.plot(ride_longitudes, ride_latitudes, )
+        plt.show()
+
     return activity_data
+
+
+
+if __name__ == "__main__":
+    m = Basemap(
+                llcrnrlat=40.361369, llcrnrlon=-80.0955278,
+                urcrnrlat=40.501368, urcrnrlon=-79.865723,
+                epsg = 2272
+            )
+    m.arcgisimage( xpixels=7000, verbose=True)
+    plt.show()
