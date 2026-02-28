@@ -146,8 +146,10 @@ if __name__ == "__main__":
                     ax=ax
                     # epsg=23095,
                 )
-
-                m.arcgisimage(xpixels=400, verbose=True)
+                try:
+                    m.arcgisimage(xpixels=400, verbose=True)
+                except:
+                    pass
                 # m.etopo()
                 x, y = m(ride_longitudes, ride_latitudes)
                 m.plot(x, y, 'r-')
