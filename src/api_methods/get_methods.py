@@ -53,10 +53,44 @@ def access_activity_data(access_token:str, params:dict=None) -> dict:
 
 
 if __name__ == "__main__":
-    m = Basemap(
-                llcrnrlat=40.361369, llcrnrlon=-80.0955278,
-                urcrnrlat=40.501368, urcrnrlon=-79.865723,
-                epsg = 2272
+    import pandas as pd
+    datas = pd.read_csv('data\my_activity_data=20260228120007.csv')
+
+    for data in datas.get('map.summary_polyline'):
+        print(data)
+        coordinates = polyline.decode(data)
+
+        ride_longitudes = [coordinate[1] for coordinate in coordinates]
+        ride_latitudes = [coordinate[0] for coordinate in coordinates]
+
+        if 1:
+            print(ride_longitudes[0], ride_latitudes[0] )
+           
+            m = Basemap(
+                llcrnrlon=min(ride_longitudes) - 0.02,
+                llcrnrlat=min(ride_latitudes) - 0.02,
+                urcrnrlon=max(ride_longitudes) + 0.02, 
+                urcrnrlat=max(ride_latitudes) + 0.02,
+                # epsg=23095,
             )
-    m.arcgisimage( xpixels=7000, verbose=True)
-    plt.show()
+
+            m.arcgisimage(xpixels=1000, verbose=True)
+            # m.etopo()
+            x, y = m(ride_longitudes, ride_latitudes)
+            m.plot(x, y, 'r-')
+
+        else:
+            plt.axes() .set_aspect('equal')
+            plt.plot(ride_longitudes, ride_latitudes, )
+        plt.show()
+
+
+    if 0:
+        print(datas)
+        m = Basemap(
+                    llcrnrlat=40.361369, llcrnrlon=-80.0955278,
+                    urcrnrlat=40.501368, urcrnrlon=-79.865723,
+                    # epsg = 2272
+                )
+        m.arcgisimage( xpixels=700, verbose=True)
+        plt.show()
