@@ -27,15 +27,15 @@ def access_activity_data(access_token:str, params:dict=None) -> dict:
         ride_longitudes = [coordinate[1] for coordinate in coordinates]
         ride_latitudes = [coordinate[0] for coordinate in coordinates]
 
-        if 1:
+        if 0:
             print(ride_longitudes[0], ride_latitudes[0] )
 
-            _, ax = plt.subplot()
-           
+            ax = plt.subplot()
+
             m = Basemap(
                 llcrnrlon=min(ride_longitudes) - 0.02,
                 llcrnrlat=min(ride_latitudes) - 0.02,
-                urcrnrlon=max(ride_longitudes) + 0.02, 
+                urcrnrlon=max(ride_longitudes) + 0.02,
                 urcrnrlat=max(ride_latitudes) + 0.02,
                 # epsg=23095,
                 ax=ax
@@ -45,7 +45,6 @@ def access_activity_data(access_token:str, params:dict=None) -> dict:
             # m.etopo()
             x, y = m(ride_longitudes, ride_latitudes)
             m.plot(x, y, 'r-')
-            m.imshow()
 
             def on_ylims_change(event_ax):
                 print("updated ylims: ", event_ax.get_ylim())
@@ -55,7 +54,7 @@ def access_activity_data(access_token:str, params:dict=None) -> dict:
                 # m = Basemap(
                 #     llcrnrlon=x0,
                 #     llcrnrlat=y0,
-                #     urcrnrlon=x1, 
+                #     urcrnrlon=x1,
                 #     urcrnrlat=y1,
                 #     # epsg=23095,
                 # )
@@ -64,17 +63,17 @@ def access_activity_data(access_token:str, params:dict=None) -> dict:
                 # m.etopo()
                 x, y = m(ride_longitudes, ride_latitudes)
                 m.plot(x, y, 'r-')
-                
-                
-            
-           
+
+
+
+
             ax.callbacks.connect('xlim_changed', on_ylims_change)
             ax.callbacks.connect('ylim_changed', on_ylims_change)
 
         else:
             plt.axes() .set_aspect('equal')
             plt.plot(ride_longitudes, ride_latitudes, )
-        plt.show()
+        # plt.show()
 
     return activity_data
 
@@ -101,11 +100,11 @@ if __name__ == "__main__":
             print(ride_longitudes[0], ride_latitudes[0] )
 
             ax = plt.subplot()
-           
+
             m = Basemap(
                 llcrnrlon=min(ride_longitudes) - 0.02,
                 llcrnrlat=min(ride_latitudes) - 0.02,
-                urcrnrlon=max(ride_longitudes) + 0.02, 
+                urcrnrlon=max(ride_longitudes) + 0.02,
                 urcrnrlat=max(ride_latitudes) + 0.02,
                 epsg=3395,
                 projection='merc',
@@ -118,7 +117,7 @@ if __name__ == "__main__":
             print(x[:3], ride_longitudes[:3])
             m.plot(ride_longitudes, ride_latitudes, 'r-', latlon = True)
             # m.imshow()
-            
+
 
             def on_lims_change(event_ax, is_x):
                 global done, call_x, call_y, m
@@ -134,7 +133,7 @@ if __name__ == "__main__":
                 # exit()
                 x0, x1 = event_ax.get_xlim()
                 y0, y1 = event_ax.get_ylim()
-                
+
                 # plt.close()
                 # ax = plt.subplot()
                 ax.callbacks.disconnect(call_x)
@@ -164,14 +163,14 @@ if __name__ == "__main__":
                 call_y = ax.callbacks.connect('ylim_changed', on_ylims_change)
                 plt.show()
                 done = 0
-                
+
             def on_xlims_change(event_ax):
                 on_lims_change(event_ax, 1)
 
             def on_ylims_change(event_ax):
                 on_lims_change(event_ax, 0)
-            
-           
+
+
             call_x = ax.callbacks.connect('xlim_changed', on_xlims_change)
             call_y = ax.callbacks.connect('ylim_changed', on_ylims_change)
 
