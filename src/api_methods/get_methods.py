@@ -102,10 +102,10 @@ if __name__ == "__main__":
             ax = plt.subplot()
 
             m = Basemap(
-                llcrnrlon=min(ride_longitudes) - 0.02,
-                llcrnrlat=min(ride_latitudes) - 0.02,
-                urcrnrlon=max(ride_longitudes) + 0.02,
-                urcrnrlat=max(ride_latitudes) + 0.02,
+                llcrnrlon=min(ride_longitudes) - 0.002,
+                llcrnrlat=min(ride_latitudes) - 0.002,
+                urcrnrlon=max(ride_longitudes) + 0.002,
+                urcrnrlat=max(ride_latitudes) + 0.002,
                 # epsg=23095,
                 ax=ax
             )
