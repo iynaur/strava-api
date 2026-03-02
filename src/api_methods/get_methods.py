@@ -89,8 +89,16 @@ if __name__ == "__main__":
     import pandas as pd
     datas = pd.read_csv('data\my_activity_data=.csv')
 
-    for data in datas.get('map.summary_polyline'):
-        print(data)
+    # for data in datas.get('map.summary_polyline'):
+    for i in range(datas.size):
+        activity = datas.iloc[i]
+        print(activity)
+        if activity['moving_time'] < 3600* 3:
+            continue
+
+        data = activity['map.summary_polyline']
+        # print(data)
+
         coordinates = polyline.decode(data)
 
         ride_longitudes = [coordinate[1] for coordinate in coordinates]
