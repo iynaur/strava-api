@@ -17,7 +17,7 @@ def access_activity_data(access_token:str, params:dict=None) -> dict:
     if not params:
         response:dict = requests.get(endpoints.activites_endpoint, headers=headers)
     else:
-        response:dict = requests.get(endpoints.activites_endpoint, headers=headers, )
+        response:dict = requests.get(endpoints.activites_endpoint, headers=headers, params=params)
     response.raise_for_status()
     activity_data = response.json()
     # print(activity_data)
@@ -87,7 +87,7 @@ call_x = 0
 call_y = 0
 if __name__ == "__main__":
     import pandas as pd
-    datas = pd.read_csv('data\my_activity_data=20260228120007.csv')
+    datas = pd.read_csv('data\my_activity_data=.csv')
 
     for data in datas.get('map.summary_polyline'):
         print(data)
