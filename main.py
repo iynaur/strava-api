@@ -21,8 +21,8 @@ def main():
         dfs_to_concat.append(cur_df)
         if len(data) == 0:
             break
-        break
-    
+        # break
+
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     df = pd.concat(dfs_to_concat, ignore_index=True)
     df.to_csv(Path('data', f'my_activity_data={timestamp}.csv'), index=False)

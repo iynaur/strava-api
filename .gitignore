@@ -33,3 +33,4 @@ node_modules/
 .pytest_cache
 
 *.csv
+.github/copilot-instructions.md
