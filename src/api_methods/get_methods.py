@@ -107,7 +107,8 @@ if __name__ == "__main__":
                 llcrnrlat=min(ride_latitudes) - 0.02,
                 urcrnrlon=max(ride_longitudes) + 0.02, 
                 urcrnrlat=max(ride_latitudes) + 0.02,
-                # epsg=23095,
+                epsg=3395,
+                projection='merc',
                 ax=ax
             )
 
@@ -115,12 +116,12 @@ if __name__ == "__main__":
             # m.etopo()
             x, y = m(ride_longitudes, ride_latitudes)
             print(x[:3], ride_longitudes[:3])
-            m.plot(x, y, 'r-')
+            m.plot(ride_longitudes, ride_latitudes, 'r-', latlon = True)
             # m.imshow()
             
 
             def on_lims_change(event_ax, is_x):
-                global done, call_x, call_y
+                global done, call_x, call_y, m
                 done = done + 1 if is_x else 2
                 if done > 0 and done < 3:
                     pass
@@ -138,13 +139,17 @@ if __name__ == "__main__":
                 # ax = plt.subplot()
                 ax.callbacks.disconnect(call_x)
                 ax.callbacks.disconnect(call_y)
+
+                nx, ny = m([x0,x1], [y0, y1], inverse=True)
+                ax.clear()
                 m = Basemap(
-                    llcrnrlon=x0,
-                    llcrnrlat=y0,
-                    urcrnrlon=x1, 
-                    urcrnrlat=y1,
-                    ax=ax
-                    # epsg=23095,
+                    llcrnrlon=nx[0],
+                    llcrnrlat=ny[0],
+                    urcrnrlon=nx[1], 
+                    urcrnrlat=ny[1],
+                    ax=ax,
+                    epsg=3395,
+                    projection='merc',
                 )
                 try:
                     m.arcgisimage(xpixels=400, verbose=True)
@@ -152,7 +157,7 @@ if __name__ == "__main__":
                     pass
                 # m.etopo()
                 x, y = m(ride_longitudes, ride_latitudes)
-                m.plot(x, y, 'r-')
+                m.plot(ride_longitudes, ride_latitudes, 'r-', latlon = True)
                 if done == 3:
                     pass
                 call_x = ax.callbacks.connect('xlim_changed', on_xlims_change)
